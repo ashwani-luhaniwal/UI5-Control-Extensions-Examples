@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <title>Extending Square Control</title>
+
+        <script id="sap-ui-bootstrap" type="text/javascript" src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"></script>
+        <script type="text/javascript">
+            // Part 1: Define new control type "my.Square"
+            sap.ui.core.Control.extend("my.Square", {
+                // the control API:
+                metadata: {
+                    properties: {
+                        // setter and getter are generated
+                        // including databinding and validation
+                        "text": "string",
+                        "size": { type: "sap.ui.core.CSSSize", defaultValue: "200px" }
+                    }
+                },
+
+                // the part creating the HTML
+                renderer: function(oRm, oControl) { // static function
+                    oRm.write("<div");
+                    oRm.writeControlData(oControl); // the Control ID
+                    oRm.addStyle("width", oControl.getSize());
+                    oRm.addStyle("height", oControl.getSize());
+                    oRm.writeStyles();
+                    oRm.addClass("mySquare");       // add a CSS class
+                    oRm.writeClasses();
+                    oRm.write(">");
+                    oRm.writeEscaped(oControl.getText());
+                    oRm.write("</div>");
+                },
+
+                // an event handler:
+                onclick: function(evt) {    // when the square is clicked
+                    alert("Clicked! Text is:\n" + this.getText());
+                }
+            });
+
+            // Part 2 : Intantiate Control and place it onto the page
+            var myControl = new my.Square({ text: "Hello", size: "100px" });
+            myControl.placeAt("content");
+
+            // Ok, add another instance...:
+            new my.Square({ text: "Me too!", size: "80px" }).placeAt("content");
+        </script>
+
+        <style type="text/css">
+            /* Part 3 : the style for all control instances */
+
+            .mySquare {
+                border: 1px solid red;
+                background-color: #ddd;
+                padding: 8px;
+                text-align: center;
+                box-sizing: border-box;
+            }
+        </style>
+    </head>
+    <body class="sapUiBody">
+        <div id="content"></div>
+    </body>
+</html>
