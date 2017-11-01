@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <title>Extend Textfield Rendering</title>
+
+        <script id="sap-ui-bootstrap" type="text/javascript" src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m, sap.ui.commons"></script>
+        <script type="text/javascript">
+            sap.ui.commons.TextField.extend("HighlightField", { // call the new Control type "HighlightField" and let it inherit from sap.ui.commons.TextField
+                renderer: {
+                    // note that NO render() function is given here! The TextField's render() function is used.
+                    // But one function is overwritten:
+
+
+                    renderInnerAttributes: function(oRm, oTextField) {
+                        oRm.addStyle('background-color', '#ffff00');    // this change could also be done with plain CSS!!
+                                                                        // But you get the idea..
+                    }
+                }
+            });
+
+            var myControl = new HighlightField({ value: "Highlighted editing" });
+            myControl.placeAt("content");
+        </script>
+    </head>
+    <body class="sapUiBody">
+        <div id="content"></div>
+    </body>
+</html>
