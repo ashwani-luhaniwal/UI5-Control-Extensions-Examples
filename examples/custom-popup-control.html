@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <title>Create custom popup control</title>
+
+        <script id="sap-ui-bootstrap" type="text/javascript" src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m, sap.ui.commons"></script>
+        <script type="text/javascript">
+            // Part 1 : define new control type "my.Square"
+            sap.ui.core.Control.extend("my.Square", {
+                // the control API:
+                metadata: {
+                    properties: {   // setter and getter are genrated
+                                    // including databinding and validation
+                        "text": "string",
+                        "size": {
+                            type: "sap.ui.core.CSSSize",
+                            defaultValue: "200px"
+                        }
+                    },
+                    events: {
+                        press: "press"
+                    },
+                    aggregations: {
+                        content: {
+                            type: "sap.ui.core.Control"
+                        }
+                    }
+                },
+
+                // the part creating the HTML:
+                renderer: function(oRm, oControl) { // static function
+                    oRm.write("<div");
+                    oRm.writeControlData(oControl); // the Control ID
+                    oRm.addStyle("width", oControl.getSize());
+                    oRm.addStyle("height", oControl.getSize());
+                    oRm.writeStyles();
+                    oRm.addClass("mySquare");       // add a CSS class
+                    oRm.writeClasses();
+                    oRm.write(">");
+                    oRm.writeEscaped(oControl.getText());
+
+                    var aContent = oControl.getContent();
+                    for (var i = 0; i < aContent.length; i++) {
+                        oRm.renderControl(aContent[i]);
+                    }
+                    oRm.write("</div>");
+                },
+
+                init: function() {
+                    jQuery.sap.require("sap.ui.core.Popup");
+                    this.oPopup = new sap.ui.core.Popup(this);
+                },
+
+                open: function() {
+                    this.oPopup.open();
+                },
+
+                // an event handler:
+                ontap: function(evt) {  // is called when the Control's area is clicked - no event registration required
+                    this.firePress();
+                    // if (!evt.isMarked()) {   // check whether a child control has already handled the event }
+                    this.oPopup.close();
+                    // }
+                }
+            });
+
+            // Part 2: Instantiate Control and place it onto the page
+            var myControl = new my.Square({ 
+                text: "Me too!", 
+                size: "80px", 
+                content: [
+                    new sap.m.Button({ text: "Hi!" })   // remember to load the sap.m library!
+                ]
+            });
+
+            new sap.m.Button({
+                text: "Open Square",
+                press: function() {
+                    myControl.open();
+                }
+            }).placeAt("content");
+        </script>
+        <style type="text/css">
+            /* Part 3: the style for all control instances */
+            .mySquare {
+                border: 1px solid red;
+                background-color: #dddddd;
+                padding: 8px;
+                text-align: center;
+                box-sizing: border-box;
+            }
+        </style>
+    </head>
+    <body class="sapUiBody">
+        <div id="content"></div>
+    </body>
+</html>
